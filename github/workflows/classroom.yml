@@ -36,107 +36,48 @@ jobs:
              -o test_mechanical.py \
              https://api.github.com/repos/${{ secrets.TEST_REPO_OWNER }}/mechanical-tests-private/contents/numpy-ufunc/test_mechanical.py
       
-    - name: Verify test file exists
-      run: |
-        if [ ! -f test_mechanical.py ]; then
-          echo "ERROR: Test file not downloaded!"
-          exit 1
-        fi
-        echo "✅ Test file downloaded successfully"
-        
     - name: Q1-Q2 Von Mises & Projectile (20 points)
       run: |
-        echo "================================================"
-        echo "Testing Q1-Q2: Von Mises & Projectile (20 pts)"
-        echo "================================================"
-        pytest test_mechanical.py::TestQ1VonMisesStress -v --tb=short
-        pytest test_mechanical.py::TestQ2ProjectileTrajectory -v --tb=short
-        echo "✅ Q1-Q2 PASSED - 20/20 points"
+        echo "Testing Q1-Q2..."
+        pytest test_mechanical.py::TestQ1VonMisesStress -v
+        pytest test_mechanical.py::TestQ2ProjectileTrajectory -v
+        echo "✅ Q1-Q2 PASSED"
         
     - name: Q3-Q4 Forces & Thermal (20 points)
       run: |
-        echo "================================================"
-        echo "Testing Q3-Q4: Forces & Thermal (20 pts)"
-        echo "================================================"
-        pytest test_mechanical.py::TestQ3ForceResultant -v --tb=short
-        pytest test_mechanical.py::TestQ4ThermalExpansion -v --tb=short
-        echo "✅ Q3-Q4 PASSED - 20/20 points"
+        echo "Testing Q3-Q4..."
+        pytest test_mechanical.py::TestQ3ForceResultant -v
+        pytest test_mechanical.py::TestQ4ThermalExpansion -v
+        echo "✅ Q3-Q4 PASSED"
         
     - name: Q5-Q6 Angular & Beam (20 points)
       run: |
-        echo "================================================"
-        echo "Testing Q5-Q6: Angular & Beam (20 pts)"
-        echo "================================================"
-        pytest test_mechanical.py::TestQ5AngularVelocity -v --tb=short
-        pytest test_mechanical.py::TestQ6BeamDeflection -v --tb=short
-        echo "✅ Q5-Q6 PASSED - 20/20 points"
+        echo "Testing Q5-Q6..."
+        pytest test_mechanical.py::TestQ5AngularVelocity -v
+        pytest test_mechanical.py::TestQ6BeamDeflection -v
+        echo "✅ Q5-Q6 PASSED"
         
     - name: Q7-Q8 Velocity & Power (20 points)
       run: |
-        echo "================================================"
-        echo "Testing Q7-Q8: Velocity & Power (20 pts)"
-        echo "================================================"
-        pytest test_mechanical.py::TestQ7VelocityComponents -v --tb=short
-        pytest test_mechanical.py::TestQ8PowerTorque -v --tb=short
-        echo "✅ Q7-Q8 PASSED - 20/20 points"
+        echo "Testing Q7-Q8..."
+        pytest test_mechanical.py::TestQ7VelocityComponents -v
+        pytest test_mechanical.py::TestQ8PowerTorque -v
+        echo "✅ Q7-Q8 PASSED"
         
     - name: Q9-Q10 Spring & Damping (20 points)
       run: |
-        echo "================================================"
-        echo "Testing Q9-Q10: Spring & Damping (20 pts)"
-        echo "================================================"
-        pytest test_mechanical.py::TestQ9SpringSystem -v --tb=short
-        pytest test_mechanical.py::TestQ10DampedOscillation -v --tb=short
-        echo "✅ Q9-Q10 PASSED - 20/20 points"
+        echo "Testing Q9-Q10..."
+        pytest test_mechanical.py::TestQ9SpringSystem -v
+        pytest test_mechanical.py::TestQ10DampedOscillation -v
+        echo "✅ Q9-Q10 PASSED"
         
-    - name: Final Score Summary
-      if: success()
+    - name: Calculate Score
+      if: always()
       run: |
-        echo ""
-        echo "================================================"
-        echo "           ✅ ALL TESTS PASSED! ✅"
-        echo "================================================"
-        echo "Q1-Q2: Von Mises & Projectile    20/20 ✅"
-        echo "Q3-Q4: Forces & Thermal          20/20 ✅"
-        echo "Q5-Q6: Angular & Beam            20/20 ✅"
-        echo "Q7-Q8: Velocity & Power          20/20 ✅"
-        echo "Q9-Q10: Spring & Damping         20/20 ✅"
-        echo "=========================================="
-        echo "TOTAL SCORE: 100/100 🎉"
-        echo "=========================================="
-```
-
----
-
-## **Why This Works Better**
-
-**Problems with autograding-command-grader:**
-- ❌ Reports false failures (exit code 1)
-- ❌ Can't handle `&&` properly
-- ❌ Complex integration issues
-
-**Benefits of simple workflow:**
-- ✅ Tests actually run and pass
-- ✅ Clear visual feedback (green ✅ or red ❌)
-- ✅ Each step shows points
-- ✅ No reporter integration problems
-- ✅ Students can see exactly which tests pass/fail
-
----
-
-## **How to Grade with This Workflow**
-
-### **For You (Instructor):**
-
-1. Go to student repository
-2. Click **Actions** tab
-3. Look at latest workflow run
-4. Count green checkmarks:
-```
-✅ Q1-Q2: 20 points
-✅ Q3-Q4: 20 points  
-✅ Q5-Q6: 20 points
-✅ Q7-Q8: 20 points
-✅ Q9-Q10: 20 points
--------------------
-Total: 100 points
+        echo "========================================="
+        echo "GRADING SUMMARY"
+        echo "========================================="
+        echo "Check marks above show which sections passed"
+        echo "Each section worth 20 points"
+        echo "5 sections = 100 points total"
+        echo "========================================="
