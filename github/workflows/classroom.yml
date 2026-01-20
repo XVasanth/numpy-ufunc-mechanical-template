@@ -1,0 +1,77 @@
+name: Autograding Tests
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+permissions:
+  checks: write
+  actions: read
+  contents: read
+
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Fetch test file from private repository
+      run: |
+        curl -H "Authorization: token ${{ secrets.TEST_ACCESS_TOKEN }}" \
+             -H "Accept: application/vnd.github.v3.raw" \
+             -o test_mechanical.py \
+             https://api.github.com/repos/${{ secrets.TEST_REPO_OWNER }}/mechanical-tests-private/contents/numpy-ufunc/test_mechanical.py
+      
+    - name: Run Tests Q1-Q2
+      id: test-q1-q2
+      run: |
+        pytest test_mechanical.py::TestQ1VonMisesStress -v --tb=short
+        pytest test_mechanical.py::TestQ2ProjectileTrajectory -v --tb=short
+      continue-on-error: true
+      
+    - name: Run Tests Q3-Q4
+      id: test-q3-q4
+      run: |
+        pytest test_mechanical.py::TestQ3ForceResultant -v --tb=short
+        pytest test_mechanical.py::TestQ4ThermalExpansion -v --tb=short
+      continue-on-error: true
+      
+    - name: Run Tests Q5-Q6
+      id: test-q5-q6
+      run: |
+        pytest test_mechanical.py::TestQ5AngularVelocity -v --tb=short
+        pytest test_mechanical.py::TestQ6BeamDeflection -v --tb=short
+      continue-on-error: true
+      
+    - name: Run Tests Q7-Q8
+      id: test-q7-q8
+      run: |
+        pytest test_mechanical.py::TestQ7VelocityComponents -v --tb=short
+        pytest test_mechanical.py::TestQ8PowerTorque -v --tb=short
+      continue-on-error: true
+      
+    - name: Run Tests Q9-Q10
+      id: test-q9-q10
+      run: |
+        pytest test_mechanical.py::TestQ9SpringSystem -v --tb=short
+        pytest test_mechanical.py::TestQ10DampedOscillation -v --tb=short
+      continue-on-error: true
+      
+    - name: Run All Tests
+      id: test-all
+      run: pytest test_mechanical.py -v --tb=line
