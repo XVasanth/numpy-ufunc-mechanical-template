@@ -37,40 +37,63 @@ jobs:
              -o test_mechanical.py \
              https://api.github.com/repos/${{ secrets.TEST_REPO_OWNER }}/mechanical-tests-private/contents/numpy-ufunc/test_mechanical.py
       
-    - name: Verify test file downloaded
-      run: |
-        if [ ! -f test_mechanical.py ]; then
-          echo "ERROR: test_mechanical.py not found!"
-          exit 1
-        fi
-        echo "Test file downloaded successfully"
-        head -5 test_mechanical.py
+    - name: Q1-Q2 Von Mises & Projectile
+      id: q1-q2-von-mises-projectile
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Q1-Q2 Von Mises & Projectile
+        setup-command: ''
+        command: pytest test_mechanical.py::TestQ1VonMisesStress -v && pytest test_mechanical.py::TestQ2ProjectileTrajectory -v
+        timeout: 5
+        max-score: 20
         
-    - name: Run Tests Q1-Q2
-      id: test-q1-q2
-      run: pytest test_mechanical.py::TestQ1VonMisesStress -v && pytest test_mechanical.py::TestQ2ProjectileTrajectory -v
-      continue-on-error: true
-      
-    - name: Run Tests Q3-Q4
-      id: test-q3-q4
-      run: pytest test_mechanical.py::TestQ3ForceResultant -v && pytest test_mechanical.py::TestQ4ThermalExpansion -v
-      continue-on-error: true
-      
-    - name: Run Tests Q5-Q6
-      id: test-q5-q6
-      run: pytest test_mechanical.py::TestQ5AngularVelocity -v && pytest test_mechanical.py::TestQ6BeamDeflection -v
-      continue-on-error: true
-      
-    - name: Run Tests Q7-Q8
-      id: test-q7-q8
-      run: pytest test_mechanical.py::TestQ7VelocityComponents -v && pytest test_mechanical.py::TestQ8PowerTorque -v
-      continue-on-error: true
-      
-    - name: Run Tests Q9-Q10
-      id: test-q9-q10
-      run: pytest test_mechanical.py::TestQ9SpringSystem -v && pytest test_mechanical.py::TestQ10DampedOscillation -v
-      continue-on-error: true
-      
-    - name: Run All Tests (Summary)
-      id: test-all
-      run: pytest test_mechanical.py -v --tb=line
+    - name: Q3-Q4 Forces & Thermal
+      id: q3-q4-forces-thermal
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Q3-Q4 Forces & Thermal
+        setup-command: ''
+        command: pytest test_mechanical.py::TestQ3ForceResultant -v && pytest test_mechanical.py::TestQ4ThermalExpansion -v
+        timeout: 5
+        max-score: 20
+        
+    - name: Q5-Q6 Angular & Beam
+      id: q5-q6-angular-beam
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Q5-Q6 Angular & Beam
+        setup-command: ''
+        command: pytest test_mechanical.py::TestQ5AngularVelocity -v && pytest test_mechanical.py::TestQ6BeamDeflection -v
+        timeout: 5
+        max-score: 20
+        
+    - name: Q7-Q8 Velocity & Power
+      id: q7-q8-velocity-power
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Q7-Q8 Velocity & Power
+        setup-command: ''
+        command: pytest test_mechanical.py::TestQ7VelocityComponents -v && pytest test_mechanical.py::TestQ8PowerTorque -v
+        timeout: 5
+        max-score: 20
+        
+    - name: Q9-Q10 Spring & Damping
+      id: q9-q10-spring-damping
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Q9-Q10 Spring & Damping
+        setup-command: ''
+        command: pytest test_mechanical.py::TestQ9SpringSystem -v && pytest test_mechanical.py::TestQ10DampedOscillation -v
+        timeout: 5
+        max-score: 20
+        
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        Q1-Q2-VON-MISES-PROJECTILE_RESULTS: "${{steps.q1-q2-von-mises-projectile.outputs.result}}"
+        Q3-Q4-FORCES-THERMAL_RESULTS: "${{steps.q3-q4-forces-thermal.outputs.result}}"
+        Q5-Q6-ANGULAR-BEAM_RESULTS: "${{steps.q5-q6-angular-beam.outputs.result}}"
+        Q7-Q8-VELOCITY-POWER_RESULTS: "${{steps.q7-q8-velocity-power.outputs.result}}"
+        Q9-Q10-SPRING-DAMPING_RESULTS: "${{steps.q9-q10-spring-damping.outputs.result}}"
+      with:
+        runners: q1-q2-von-mises-projectile,q3-q4-forces-thermal,q5-q6-angular-beam,q7-q8-velocity-power,q9-q10-spring-damping
